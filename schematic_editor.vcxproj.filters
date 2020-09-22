@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="header\json\json.h" />
+    <ClInclude Include="header\File.hpp" />
+    <ClInclude Include="header\Wire.hpp" />
+    <ClInclude Include="header\Element.hpp" />
+    <ClInclude Include="header\FullWire.hpp" />
+    <ClInclude Include="header\VertexObject.hpp" />
+    <ClInclude Include="header\header.hpp" />
+    <ClInclude Include="header\Sender.hpp" />
+    <ClInclude Include="header\Receiver.hpp" />
+    <ClInclude Include="header\WireSignal.hpp" />
+    <ClInclude Include="header\Signal.hpp" />
+    <ClInclude Include="header\SchematicEditor.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\jsoncpp.cpp" />
+    <ClCompile Include="src\read_config.cpp" />
+    <ClCompile Include="src\File.cpp" />
+    <ClCompile Include="src\Wire.cpp" />
+    <ClCompile Include="src\FullWire.cpp" />
+    <ClCompile Include="src\Element.cpp" />
+    <ClCompile Include="src\VertexObject.cpp" />
+    <ClCompile Include="src\WireSignal.cpp" />
+    <ClCompile Include="src\Signal.cpp" />
+    <ClCompile Include="src\Receiver.cpp" />
+    <ClCompile Include="header\Style.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="config.json" />
+    <None Include="light_theme.json" />
+    <None Include="dark_theme.json" />
+  </ItemGroup>
+</Project>
