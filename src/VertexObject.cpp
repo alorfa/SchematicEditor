@@ -6,7 +6,7 @@ namespace se
 	void VertexObject::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
 		for (size_t i = 0; i < container.size(); i++)
-			target.draw(*container[i]);
+			target.draw(*container[i], states);
 	}
 
 	VertexObject::VertexObject() {}
@@ -24,19 +24,9 @@ namespace se
 	{
 		container.push_back(new_array);
 	}
-	void VertexObject::move(sf::Vector2f offset)
-	{
-		offset = se::to_SFML_coordinates(offset);
-		for (size_t i = 0; i < container.size(); i++)
-		{
-			for (size_t j = 0; j < container[i]->getVertexCount(); j++)
-			{
-				(*container[i])[j].position += offset;
-			}
-		}
-	}
 	VertexObject& VertexObject::operator=(const VertexObject& object)
 	{
+
 		for (size_t i = 0; i < container.size(); i++)
 			delete container[i];
 

@@ -27,24 +27,33 @@ namespace se
 	};
 	enum ElemDirection
 	{
-		Down, Left, Up, Right
+		Up, Right, Down, Left
 	};
-	class Element : public sf::Drawable
+	class Element : public sf::Drawable, protected sf::Transformable
 	{
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-		VertexObject drawing;
+		VertexObject* drawing;
 
 		ElemType type;
 		ElemDirection direction;
 		sf::Vector2f pos;
 		float size;
 
+		static bool shader_is_valid;
+		static sf::Shader* shader;
+		static sf::Color active_color;
+		static sf::Color passive_color;
+		sf::Color current_color;
+
 		Sender sender;
 	public:
 		Receiver left, right;
 		Receiver down;
 
+		/*just requires an sf::Shader object(it must be deleted
+		in the end of the program)
+		*/
 		static void init();
 
 		Element(ElemType type, ElemDirection direction, sf::Vector2f position);
@@ -68,6 +77,8 @@ namespace se
 		void setDirection(ElemDirection direction);
 		void setPosition(sf::Vector2f position);
 		void setReceiver(Receiver* receiver);
-		void setColor(sf::Color color);
+
+		static void setPassiveColor(sf::Color color);
+		static void setActiveColor(sf::Color color);
 	};
 }

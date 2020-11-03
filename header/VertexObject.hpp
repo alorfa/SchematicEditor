@@ -16,7 +16,7 @@ namespace se
 		~VertexObject();
 
 		void add(sf::VertexArray* new_array);
-		void move(sf::Vector2f offset);
+		//void move(sf::Vector2f offset);
 		VertexObject& operator=(const VertexObject& object);
 		sf::VertexArray& operator[](size_t index) const;
 

@@ -194,13 +194,6 @@ namespace
 		right_bottom.x = right_top.x;
 		right_bottom.y = right_top.y - lines_length;
 
-		std::cout << std::endl;
-		PRINT(left_top);
-		PRINT(left_bottom);
-		PRINT(right_bottom);
-		PRINT(right_top);
-		std::cout << std::endl;
-
 		for (size_t index = polygons_in_sector * 4; index < elem->getVertexCount(); index += 4)
 		{
 			size_t i = index - polygons_in_sector * 4;
@@ -267,7 +260,6 @@ namespace
 		center.y -= size.y / 2.f;
 		center.x -= size.x / 2.f;
 
-
 		float rotate;
 
 		float angle = 0.f;
@@ -305,6 +297,7 @@ namespace
 
 		return elem;
 	}
+	//sf::Shader shader;
 }
 
 namespace se
@@ -315,13 +308,23 @@ namespace se
 	}
 	void Element::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
-		target.draw(drawing);
+		states.transform *= getTransform();
+		states.texture = nullptr;
+
+		if (shader_is_valid)
+		{
+			shader->setUniform("pass_color", sf::Glsl::Vec4(current_color));
+			states.shader = shader;
+		}
+
+		target.draw(*drawing, states);
 	}
 
 	void Element::init()
 	{
 		sf::Vector2f size(10.f, 10.f);
 
+		//create objects
 		{
 			sf::VertexArray* triangle, * circle;
 
@@ -400,6 +403,11 @@ namespace se
 			Drawings::NOT_XOR.add(sector2);
 			Drawings::NOT_XOR.add(circle);
 		}
+
+		//compile shaders
+		if (!shader)
+			shader = new sf::Shader();
+		shader_is_valid = shader->loadFromFile("vert.glslv", "frag.glslf");
 	}
 	Element::Element(ElemType type, ElemDirection direction, sf::Vector2f position)
 	{
@@ -448,6 +456,11 @@ namespace se
 		if (type & ElemType::NOT)
 			sender.gives_signal = !sender.gives_signal;
 
+		if (sender.gives_signal)
+			current_color = active_color;
+		else
+			current_color = passive_color;
+
 		sender.GiveSignal();
 	}
 
@@ -458,57 +471,63 @@ namespace se
 		switch (type)
 		{
 		case ElemType::NOT:
-			drawing = Drawings::NOT;
+			drawing = &Drawings::NOT;
 			size = 1.15f;
 			break;
 		case ElemType::OR:
-			drawing = Drawings::OR;
+			drawing = &Drawings::OR;
 			size = 1.f;
 			break;
 		case ElemType::NOT_OR:
-			drawing = Drawings::NOT_OR;
-			size = 1.f;
+			drawing = &Drawings::NOT_OR;
+			size = 1.2f;
 			break;
 		case ElemType::AND:
-			drawing = Drawings::AND;
+			drawing = &Drawings::AND;
 			size = 0.8f;
 			break;
 		case ElemType::NOT_AND:
-			drawing = Drawings::NOT_AND;
+			drawing = &Drawings::NOT_AND;
 			size = 1.f;
 			break;
 		case ElemType::XOR:
-			drawing = Drawings::XOR;
+			drawing = &Drawings::XOR;
 			size = 1.f;
 			break;
 		case ElemType::NOT_XOR:
-			drawing = Drawings::NOT_XOR;
-			size = 1.f;
+			drawing = &Drawings::NOT_XOR;
+			size = 1.2f;
 			break;
 		}
 	}
 	void Element::setDirection(ElemDirection direction)
-	{
+	{		
 		this->direction = direction;
+
+		this->setRotation(float(direction  * 90));
 	}
 	void Element::setPosition(sf::Vector2f position)
 	{
-		sf::Vector2f offset(position.x - pos.x, position.y - pos.y);
 		pos = position;
 
-		drawing.move(offset);
+		((sf::Transformable*)this)->setPosition(se::to_SFML_coordinates(position));
 	}
 	void Element::setReceiver(Receiver* receiver)
 	{
 		sender.receiver = receiver;
 	}
-	void Element::setColor(sf::Color color)
+
+	void Element::setPassiveColor(sf::Color color)
 	{
-		for (size_t array_index = 0; array_index < drawing.size(); array_index++)
-		{
-			sf::VertexArray& array = drawing[array_index];
-			for (size_t i = 0; i < array.getVertexCount(); i++)
-				array[i].color = color;
-		}
+		passive_color = color;
 	}
+	void Element::setActiveColor(sf::Color color)
+	{
+		active_color = color;
+	}
+
+	sf::Color Element::passive_color = sf::Color();
+	sf::Color Element::active_color = sf::Color();
+	sf::Shader* Element::shader = nullptr;
+	bool Element::shader_is_valid = false;
 }
