@@ -31,8 +31,10 @@
 *.out
 *.app
 
-# Project files
+# Visual Studio files
 *.sln
 *.vcxproj
 *.filters
 *.user
+/.vs/*
+/x64/*
